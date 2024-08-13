@@ -1,250 +1,373 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gym Schedule Generator</title>
     <style>
-        body {
-            font-family: 'Termina', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-            overflow-x: hidden;
-        }
+      body {
+        font-family: "Termina", sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        /* height: 100vh;*/
+        background-color: #f4f4f4;
+        margin: 0;
+        overflow-x: hidden;
+      }
+      .form-container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        margin: 10px;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
 
-        .form-container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-        }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+      .form-group input[type="number"],
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
+      .form-group textarea {
+        height: 100px;
+        resize: vertical; /* Allows vertical resizing */
+      }
 
-        .form-group input[type="number"],
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+      .form-group input[type="number"] {
+        step: 5; /* Step ratio of 5 minutes */
+      }
 
-        .form-group textarea {
-            height: 100px;
-            resize: vertical; /* Allows vertical resizing */
-        }
+      .form-group input[type="checkbox"],
+      .form-group input[type="radio"] {
+        margin-right: 0.5rem;
+      }
 
-        .form-group input[type="number"] {
-            step: 5; /* Step ratio of 5 minutes */
-        }
+      .checkbox-group,
+      .radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
 
-        .form-group input[type="checkbox"],
-        .form-group input[type="radio"] {
-            margin-right: 0.5rem;
-        }
+      .checkbox-group label,
+      .radio-group label {
+        display: flex;
+        align-items: center;
+      }
 
-        .checkbox-group,
-        .radio-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+      .checkbox-group input,
+      .radio-group input {
+        margin-right: 0.5rem;
+      }
 
-        .checkbox-group label,
-        .radio-group label {
-            display: flex;
-            align-items: center;
-        }
+      .form-group button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
 
-        .checkbox-group input,
-        .radio-group input {
-            margin-right: 0.5rem;
-        }
+      .form-group button:hover {
+        background-color: #0056b3;
+      }
 
-        .form-group button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+      #loading {
+        display: none;
+        text-align: center;
+        margin-top: 2rem;
+      }
 
-        .form-group button:hover {
-            background-color: #0056b3;
-        }
+      #schedule {
+        display: none;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        overflow-x: auto; /* Adds horizontal scrollbar if content overflows */
+      }
 
-        #loading {
-            display: none;
-            text-align: center;
-            margin-top: 2rem;
-        }
+      pre {
+        white-space: pre-wrap; /* Allows the text to wrap */
+        word-break: break-word; /* Breaks long words to fit the container */
+      }
 
-        #schedule {
-            display: none;
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            overflow-x: auto; /* Adds horizontal scrollbar if content overflows */
-        }
+      /* Simple spinner */
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid #007bff;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
 
-        pre {
-            white-space: pre-wrap; /* Allows the text to wrap */
-            word-break: break-word; /* Breaks long words to fit the container */
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
-
-        /* Simple spinner */
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid #007bff;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+        100% {
+          transform: rotate(360deg);
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+      }
     </style>
     <!-- Include marked.js library -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="form-container">
-        <form id="gymForm">
-            <div class="form-group">
-                <label for="duration">Session Duration (minutes):</label>
-                <input type="number" id="duration" name="duration" min="15" max="180" step="5" required>
-            </div>
+      <form id="gymForm">
+        <div class="form-group">
+          <label for="duration">Session Duration (minutes):</label>
+          <input
+            type="number"
+            id="duration"
+            name="duration"
+            min="15"
+            max="180"
+            step="5"
+            required
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="weight">Weight (kg):</label>
-                <input type="number" id="weight" name="weight" min="30" max="300" step="0.1" required>
-            </div>
+        <div class="form-group">
+          <label for="weight">Weight (kg):</label>
+          <input
+            type="number"
+            id="weight"
+            name="weight"
+            min="30"
+            max="300"
+            step="1"
+            required
+          />
+        </div>
 
-            <div class="form-group">
-                <label>Available Days:</label>
-                <div class="checkbox-group">
-                        <label><input type="checkbox" id="day1" name="daysAvailable" value="Saturday" > Saturday</label>
-                        <label><input type="checkbox" id="day2" name="daysAvailable" value="Sunday" > Sunday</label>
-                    <label><input type="checkbox" id="day3" name="daysAvailable" value="Monday" > Monday</label>
-                    <label><input type="checkbox" id="day4" name="daysAvailable" value="Tuesday" > Tuesday</label>
-                    <label><input type="checkbox" id="day5" name="daysAvailable" value="Wednesday" > Wednesday</label>
-                    <label><input type="checkbox" id="day6" name="daysAvailable" value="Thursday" > Thursday</label>
-                    <label><input type="checkbox" id="day7" name="daysAvailable" value="Friday" > Friday</label>
+        <div class="form-group">
+          <label>Available Days:</label>
+          <div class="checkbox-group">
+            <label
+              ><input
+                type="checkbox"
+                id="day1"
+                name="daysAvailable"
+                value="Saturday"
+              />
+              Saturday</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                id="day2"
+                name="daysAvailable"
+                value="Sunday"
+              />
+              Sunday</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                id="day3"
+                name="daysAvailable"
+                value="Monday"
+              />
+              Monday</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                id="day4"
+                name="daysAvailable"
+                value="Tuesday"
+              />
+              Tuesday</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                id="day5"
+                name="daysAvailable"
+                value="Wednesday"
+              />
+              Wednesday</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                id="day6"
+                name="daysAvailable"
+                value="Thursday"
+              />
+              Thursday</label
+            >
+            <label
+              ><input
+                type="checkbox"
+                id="day7"
+                name="daysAvailable"
+                value="Friday"
+              />
+              Friday</label
+            >
+          </div>
+        </div>
 
-                </div>
-            </div>
+        <div class="form-group">
+          <label>Fitness Goals:</label>
+          <div class="radio-group">
+            <label
+              ><input
+                type="radio"
+                id="goal1"
+                name="goal"
+                value="muscle gain"
+                required
+              />
+              Muscle Gain</label
+            >
+            <label
+              ><input
+                type="radio"
+                id="goal2"
+                name="goal"
+                value="weight loss"
+                required
+              />
+              Weight Loss</label
+            >
+            <label
+              ><input
+                type="radio"
+                id="goal3"
+                name="goal"
+                value="endurance"
+                required
+              />
+              Endurance</label
+            >
+            <label
+              ><input
+                type="radio"
+                id="goal4"
+                name="goal"
+                value="overall fitness"
+                required
+              />
+              Overall Fitness</label
+            >
+          </div>
+        </div>
 
-            <div class="form-group">
-                <label>Fitness Goals:</label>
-                <div class="radio-group">
-                    <label><input type="radio" id="goal1" name="goal" value="muscle gain" required> Muscle Gain</label>
-                    <label><input type="radio" id="goal2" name="goal" value="weight loss" required> Weight Loss</label>
-                    <label><input type="radio" id="goal3" name="goal" value="endurance" required> Endurance</label>
-                    <label><input type="radio" id="goal4" name="goal" value="overall fitness" required> Overall Fitness</label>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="notes">Notes:</label>
+          <textarea
+            id="notes"
+            name="notes"
+            placeholder="Add any additional notes here..."
+          ></textarea>
+        </div>
 
-            <div class="form-group">
-                <label for="notes">Notes:</label>
-                <textarea id="notes" name="notes" placeholder="Add any additional notes here..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <button type="submit">Generate Schedule</button>
-            </div>
-        </form>
+        <div class="form-group">
+          <button type="submit">Generate Schedule</button>
+        </div>
+      </form>
     </div>
 
     <div id="loading">
-        <div class="spinner"></div>
-        <p>Loading...</p>
+      <div class="spinner"></div>
+      <p>Loading...</p>
     </div>
 
     <div id="schedule"></div>
 
     <script>
-        document.getElementById('gymForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+      document
+        .getElementById("gymForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          document.getElementById("loading").style.display = "block";
+          document.getElementById("schedule").style.display = "none";
 
-            // Show loading animation
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('schedule').style.display = 'none';
+          const duration = document.getElementById("duration").value;
+          const weight = document.getElementById("weight").value;
+          const goals = document.querySelector(
+            'input[name="goal"]:checked'
+          ).value;
+          const daysAvailable = Array.from(
+            document.querySelectorAll('input[name="daysAvailable"]:checked')
+          )
+            .map((el) => el.value)
+            .join(", ");
+          const notes = document.getElementById("notes").value;
 
-            const duration = document.getElementById('duration').value;
-            const weight = document.getElementById('weight').value;
-            const goals = document.querySelector('input[name="goal"]:checked').value;
-            const daysAvailable = Array.from(document.querySelectorAll('input[name="daysAvailable"]:checked')).map(el => el.value).join(', ');
-            const notes = document.getElementById('notes').value;
+          const numDays = daysAvailable.split(", ").length;
+          const promptText = `numDays = ${numDays}, duration = ${duration} Min, weight = ${weight} kg, goals = ${goals}, daysAvailable = ${daysAvailable}, notes = ${notes}.`;
 
-            const numDays = daysAvailable.split(', ').length;
-            const promptText = `numDays = ${numDays}, duration = ${duration} Min, weight = ${weight} kg, goals = ${goals}, daysAvailable = ${daysAvailable}, notes = ${notes}.`;
+          const apiUrl = `https://gym.ai.pplo.dev/?text=${encodeURIComponent(
+            promptText
+          )}`;
 
-            const apiUrl = `https://gym.ai.pplo.dev/?text=${encodeURIComponent(promptText)}`;
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", apiUrl, true);
 
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', apiUrl, true);
+          xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              const response = JSON.parse(xhr.responseText);
 
-            xhr.onload = function() {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    const response = JSON.parse(xhr.responseText);
+              // Assuming the JSON response contains a 'schedule' property
+              const schedule = response.schedule || "No schedule available";
 
-                    // Assuming the JSON response contains a 'schedule' property
-                    const schedule = response.schedule || "No schedule available";
+              // Hide loading animation and display schedule
+              document.getElementById("loading").style.display = "none";
+              const scheduleDiv = document.getElementById("schedule");
+              scheduleDiv.style.display = "block";
+              // Convert Markdown to HTML
+              scheduleDiv.innerHTML = marked.parse(schedule);
 
-                    // Hide loading animation and display schedule
-                    document.getElementById('loading').style.display = 'none';
-                    const scheduleDiv = document.getElementById('schedule');
-                    scheduleDiv.style.display = 'block';
+              // Scroll to the schedule
+              scheduleDiv.scrollIntoView({ behavior: "smooth" });
+            } else {
+              throw new Error(`HTTP error! Status: ${xhr.status}`);
+            }
+          };
 
-                    // Convert Markdown to HTML
-                    scheduleDiv.innerHTML = marked.parse(schedule);
+          xhr.onerror = function () {
+            console.error("Error fetching schedule");
+            document.getElementById("loading").style.display = "none";
+            const scheduleDiv = document.getElementById("schedule");
+            scheduleDiv.style.display = "block";
+            scheduleDiv.innerHTML = `<p>Failed to load schedule. Please try again.</p>`;
+          };
 
-                    // Scroll to the schedule
-                    scheduleDiv.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    throw new Error(`HTTP error! Status: ${xhr.status}`);
-                }
-            };
-
-            xhr.onerror = function() {
-                console.error('Error fetching schedule');
-                document.getElementById('loading').style.display = 'none';
-                const scheduleDiv = document.getElementById('schedule');
-                scheduleDiv.style.display = 'block';
-                scheduleDiv.innerHTML = `<p>Failed to load schedule. Please try again.</p>`;
-            };
-
-            xhr.send();
+          xhr.send();
         });
     </script>
-</body>
+  </body>
 </html>
