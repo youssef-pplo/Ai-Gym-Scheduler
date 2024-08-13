@@ -208,7 +208,7 @@
             const numDays = daysAvailable.split(', ').length;
             const promptText = `numDays = ${numDays}, duration = ${duration} Min, weight = ${weight} kg, goals = ${goals}, daysAvailable = ${daysAvailable}, notes = ${notes}.`;
 
-            const apiUrl = `https://flask-hello-worldj-nu.vercel.app/?text=${encodeURIComponent(promptText)}`;
+            const apiUrl = `https://gym.ai.pplo.dev/?text=${encodeURIComponent(promptText)}`;
 
             const xhr = new XMLHttpRequest();
             xhr.open('GET', apiUrl, true);
