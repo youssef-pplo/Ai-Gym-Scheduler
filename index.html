@@ -1,258 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gym Schedule Generator</title>
-  <style>
-    body {
-      font-family: "Termina", sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: #f4f4f4;
-      margin: 0;
-      overflow-x: hidden;
-    }
-    .form-container {
-      background-color: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      width: 100%;
-      margin: 10px;
-    }
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
-    }
-    .form-group input[type="number"],
-    .form-group textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-    .form-group textarea {
-      height: 100px;
-      resize: vertical;
-    }
-    .form-group input[type="number"] {
-      step: 5;
-    }
-    .form-group input[type="checkbox"],
-    .form-group input[type="radio"] {
-      margin-right: 0.5rem;
-    }
-    .checkbox-group,
-    .radio-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .checkbox-group label,
-    .radio-group label {
-      display: flex;
-      align-items: center;
-    }
-    .form-group button {
-      width: 100%;
-      padding: 0.75rem;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .form-group button:hover {
-      background-color: #0056b3;
-    }
-    #loading {
-      display: none;
-      text-align: center;
-      margin-top: 2rem;
-    }
-    #schedule {
-      display: none;
-      margin-top: 2rem;
-      margin-bottom: 2rem;
-      padding: 1rem;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      width: 100%;
-      overflow-x: auto;
-    }
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .spinner {
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      border-radius: 50%;
-      border-top: 4px solid #007bff;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-    /* Hide the injury details textbox initially */
-    #injuryDetails {
-      display: none;
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Gym Schedule Generator</title>
+    <style>
+        body {
+            font-family: 'Termina', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            overflow: hidden;
+            color: #ffffff;
+            height: 100vh;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            z-index: -1;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2b2b42;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6c63ff;
+            border-radius: 8px;
+        }
+        * {
+            box-sizing: border-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4e4ec8;
+        }
+
+        .container {
+            overflow-x: hidden;
+            max-width: 60%;
+            margin: auto;
+            padding: 20px;
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6c63ff;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #4e4ec8;
+            font-size: 1rem;
+            background-color: #1c1c3a;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #6c63ff;
+            box-shadow: 0 0 8px rgba(108, 99, 255, 0.5);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #6c63ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #4e4ec8;
+        }
+
+        .output {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            background-color: #1c1c3a;
+            padding: 20px;
+            border-radius: 12px;
+            white-space: pre-wrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #6c63ff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #sport-type-group {
+            display: none;
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 1rem;
+            }
+
+            .output {
+                font-size: 1rem;
+                padding: 15px;
+            }
+
+            .spinner {
+                width: 30px;
+                height: 30px;
+            }
+        }
+        .checkbox-group {
+          display: flex;
+          flex-wrap: wrap; /* Allows items to wrap onto the next line */
+          justify-content: center; /* Centers the checkboxes horizontally */
+          gap: 15px; /* Space between checkboxes */
+        }
+
+        .checkbox-group label {
+          display: flex;
+          align-items: center; /* Aligns checkbox and text vertically */
+          margin: 0; /* Remove default margin */
+          flex: 0 1 auto; /* Allows labels to shrink or grow as needed */
+        }
+
+    </style>
 </head>
 <body>
-  <div class="form-container">
-    <form id="gymForm">
-      <div class="form-group">
-        <label for="duration">Session Duration (minutes):</label>
-        <input type="number" id="duration" name="duration" min="15" max="180" step="5" required />
-      </div>
-      <div class="form-group">
-        <label for="weight">Weight (kg):</label>
-        <input type="number" id="weight" name="weight" min="30" max="300" step="1" required />
-      </div>
-      <div class="form-group">
-        <label>Available Days:</label>
-        <div class="checkbox-group">
-          <label><input type="checkbox" id="day1" name="daysAvailable" value="Saturday" />Saturday</label>
-          <label><input type="checkbox" id="day2" name="daysAvailable" value="Sunday" />Sunday</label>
-          <label><input type="checkbox" id="day3" name="daysAvailable" value="Monday" />Monday</label>
-          <label><input type="checkbox" id="day4" name="daysAvailable" value="Tuesday" />Tuesday</label>
-          <label><input type="checkbox" id="day5" name="daysAvailable" value="Wednesday" />Wednesday</label>
-          <label><input type="checkbox" id="day6" name="daysAvailable" value="Thursday" />Thursday</label>
-          <label><input type="checkbox" id="day7" name="daysAvailable" value="Friday" />Friday</label>
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <h1>Ai Gym Scheduler</h1>
+        <form id="nutrition-form">
+            <div class="form-group">
+                <label for="age">Session Duration (minutes):</label>
+                 <input type="number" id="duration" name="duration" min="15" max="180" step="5" required />
+            </div>
+            <div class="form-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" min="30" max="300" step="1" required />
+              </div>
+            <div class="form-group">
+                <label>Available Days:</label>
+                <div class="checkbox-group">
+                  <label><input type="checkbox" id="day1" name="daysAvailable" value="Saturday" />Saturday</label>
+                  <label><input type="checkbox" id="day2" name="daysAvailable" value="Sunday" />Sunday</label>
+                  <label><input type="checkbox" id="day3" name="daysAvailable" value="Monday" />Monday</label>
+                  <label><input type="checkbox" id="day4" name="daysAvailable" value="Tuesday" />Tuesday</label>
+                  <label><input type="checkbox" id="day5" name="daysAvailable" value="Wednesday" />Wednesday</label>
+                  <label><input type="checkbox" id="day6" name="daysAvailable" value="Thursday" />Thursday</label>
+                  <label><input type="checkbox" id="day7" name="daysAvailable" value="Friday" />Friday</label>
+                </div>
+              </div>
+            <div class="form-group">
+                <label for="goal">What is your goal?</label>
+                <select id="goal" name="goal" required>
+                    <option value="lose_weight">Lose Weight</option>
+                    <option value="gain_muscle">Gain Muscle</option>
+                    <option value="maintain">Maintain</option>
+                    <option value="improve_endurance">Improve Endurance</option>
+                    <option value="increase_energy">Increase Energy</option>
+                    <option value="enhance_mood">Enhance Mood</option>
+                    <option value="healthy_life">Healthy Life</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="play-sport">Do you have injury?</label>
+                <input type="checkbox" id="play-sport" name="play-sport">
+            </div>
+            <div class="form-group" id="sport-type-group">
+                <label for="sport-type">Injury Type:</label>
+                <input type="text" id="sport-type" name="sport-type">
+            </div>
+           
+            <div class="form-group">
+                <label for="notes">Any notes?</label>
+                <textarea id="notes" name="notes"></textarea>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Loading...</p>
         </div>
-      </div>
-      <div class="form-group">
-        <label>Fitness Goals:</label>
-        <div class="radio-group">
-          <label><input type="radio" id="goal1" name="goal" value="muscle gain" required />Muscle Gain</label>
-          <label><input type="radio" id="goal2" name="goal" value="weight loss" required />Weight Loss</label>
-          <label><input type="radio" id="goal3" name="goal" value="endurance" required />Endurance</label>
-          <label><input type="radio" id="goal4" name="goal" value="overall fitness" required />Overall Fitness</label>
-        </div>
-      </div>
+        <div id="output" class="output"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": ["#ffffff", "#7c4d9f", "#b59dd6"]
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
 
-      <!-- Injuries Checkbox -->
-      <div class="form-group">
-        <label><input type="checkbox" id="injuries" name="injuries" />Do you have any injuries?</label>
-      </div>
+        document.getElementById('play-sport').addEventListener('change', function() {
+            const sportTypeGroup = document.getElementById('sport-type-group');
+            sportTypeGroup.style.display = this.checked ? 'block' : 'none';
+        });
 
-      <!-- Injuries Details Textbox -->
-      <div class="form-group" id="injuryDetails">
-        <label for="injuryText">Please provide details about your injury:</label>
-        <textarea id="injuryText" name="injuryText"></textarea>
-      </div>
+        document.getElementById('nutrition-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('output').style.display = 'none';
 
-      <div class="form-group">
-        <label for="notes">Notes:</label>
-        <textarea id="notes" name="notes" placeholder="Add any additional notes here..."></textarea>
-      </div>
+            const age = document.getElementById('duration').value;
+            const weight = document.getElementById('weight').value;
+            const playSport = document.getElementById('play-sport').checked;
+            const sportType = document.getElementById('sport-type').value;
+            const goal = document.getElementById('goal').value;
+            const notes = document.getElementById('notes').value;
+            const daysAvailable = Array.from(document.querySelectorAll('input[name="daysAvailable"]:checked')
+              )
+            const data = {
+                duration: age,
+                daysAvailable : daysAvailable,
+                weight: weight,
+                have_inurjy: playSport,
+                inurjy_type: playSport ? sportType : '',
+                goal: goal,
+                notes: notes
+            };
 
-      <div class="form-group">
-        <button type="submit">Generate Schedule</button>
-      </div>
-    </form>
-  </div>
+            const apiUrl = `https://gym.ai.pplo.dev/?text=${encodeURIComponent(JSON.stringify(data))}`;
 
-  <div id="loading">
-    <div class="spinner"></div>
-    <p>Loading...</p>
-  </div>
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(result => {
+                    document.getElementById('loading').style.display = 'none';
+                    const outputDiv = document.getElementById('output');
+                    outputDiv.style.display = 'block';
 
-  <div id="schedule"></div>
-
-  <script>
-    // Toggle injury details textbox visibility based on injuries checkbox
-    document.getElementById("injuries").addEventListener("change", function() {
-      const injuryDetails = document.getElementById("injuryDetails");
-      injuryDetails.style.display = this.checked ? "block" : "none";
-    });
-      document
-        .getElementById("gymForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
-          document.getElementById("loading").style.display = "block";
-          document.getElementById("schedule").style.display = "none";
-
-          const duration = document.getElementById("duration").value;
-          const weight = document.getElementById("weight").value;
-          const goals = document.querySelector(
-            'input[name="goal"]:checked'
-          ).value;
-          const daysAvailable = Array.from(
-            document.querySelectorAll('input[name="daysAvailable"]:checked')
-          )
-            .map((el) => el.value)
-            .join(", ");
-          const notes = document.getElementById("notes").value;
-
-          const injuries = document.getElementById("injuries").checked;
-          const injuryText = injuries ? document.getElementById("injuryText").value : "No injuries";
-
-          const numDays = daysAvailable.split(", ").length;
-          const promptText = `numDays = ${numDays}, duration = ${duration} Min, weight = ${weight} kg, goals = ${goals}, daysAvailable = ${daysAvailable}, notes =  , injury : ${injuries ? injuryText : "None"}${notes}.`;
-
-          const apiUrl = `https://gym.ai.pplo.dev/?text=${encodeURIComponent(
-            promptText
-          )}`;
-
-          const xhr = new XMLHttpRequest();
-          xhr.open("GET", apiUrl, true);
-
-          xhr.onload = function () {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              const response = JSON.parse(xhr.responseText);
-
-              // Assuming the JSON response contains a 'schedule' property
-              const schedule = response.schedule || "No schedule available";
-
-              // Hide loading animation and display schedule
-              document.getElementById("loading").style.display = "none";
-              const scheduleDiv = document.getElementById("schedule");
-              scheduleDiv.style.display = "block";
-              // Convert Markdown to HTML
-              scheduleDiv.innerHTML = marked.parse(schedule);
-
-              // Scroll to the schedule
-              scheduleDiv.scrollIntoView({ behavior: "smooth" });
-            } else {
-              throw new Error(`HTTP error! Status: ${xhr.status}`);
-            }
-          };
-
-          xhr.onerror = function () {
-            console.error("Error fetching schedule");
-            document.getElementById("loading").style.display = "none";
-            const scheduleDiv = document.getElementById("schedule");
-            scheduleDiv.style.display = "block";
-            scheduleDiv.innerHTML = `<p>Failed to load schedule. Please try again.</p>`;
-          };
-
-          xhr.send();
+                    // Assuming the JSON result has a field named 'schedule'
+                    const markdown = `### Nutrition Plan\n\n${result.schedule || 'No schedule available.'}`;
+                    outputDiv.innerHTML = marked.parse(markdown);
+                    outputDiv.scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loading').style.display = 'none';
+                    const outputDiv = document.getElementById('output');
+                    outputDiv.style.display = 'block';
+                    outputDiv.innerHTML = `<p>Failed to fetch data. Please try again.</p>`;
+                });
         });
     </script>
-  </body>
+</body>
 </html>
